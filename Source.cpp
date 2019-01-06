@@ -8,7 +8,6 @@ int level = 0;
 #define COLOR_BLACK 1
 struct rbtree {
 	int key;
-	//char *value;
 	int color;
 	struct rbtree *parent;
 	struct rbtree *left;
@@ -78,8 +77,7 @@ struct rbtree *rbtree_fixup_add(struct rbtree *root,struct rbtree *node)
 	while (node != root &&
 		node->parent->color == COLOR_RED)
 	{
-		if (node->parent ==
-			node->parent->parent->left)
+		if (node->parent ==	node->parent->parent->left)
 		{
 			/* node in left tree of grandfather */
 			uncle = node->parent->parent->right;
@@ -132,7 +130,7 @@ struct rbtree *rbtree_fixup_add(struct rbtree *root,struct rbtree *node)
 	return root;
 }
 
-struct rbtree *rbtree_add(struct rbtree *root,int key/* char *value*/)
+struct rbtree *rbtree_add(struct rbtree *root,int key)
 {
 	struct rbtree *node, *parent = NullNode;
 	/* Search leaf for new element */
@@ -147,7 +145,7 @@ struct rbtree *rbtree_add(struct rbtree *root,int key/* char *value*/)
 			return root;
 	}
 //	struct rbtree* node = (struct rbtree*) malloc(sizeof(struct rbtree));
-	//node = malloc(sizeof(node));
+	node = new rbtree;
 	if (node == NULL)
 		return NULL;
 	node->key = key;
@@ -168,39 +166,48 @@ struct rbtree *rbtree_add(struct rbtree *root,int key/* char *value*/)
 	return rbtree_fixup_add(root, node);
 }
 
+//С„СѓРЅРєС†РёСЏ РґР»СЏ РЅР°С…РѕР¶РґРµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РїРѕС‚РѕРјРєРѕРІ РґРµСЂРµРІР°
+int Node_Child(rbtree* Tree) {
+	int l, r, h = 0;
+	if (Tree != NULL) {
+		l = Node_Child(Tree->left);//СЂРµРєСЂСЃРёРІРЅР°СЏ С„СѓРЅРєС†РёСЏ РґР»СЏ РЅР°С…РѕР¶РґРµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РїРѕС‚РѕРјРєРѕРІ РґРµСЂРµРІР°
+		r = Node_Child(Tree->right);
+		h = r + l + 1;
+	}
+	return h;
+}
+
 void equ(rbtree* Tree)
 {
 	if (Tree == NULL)
 		return;
-	equ(Tree->left); //функция обхода поддеревьев
+	equ(Tree->left); //С„СѓРЅРєС†РёСЏ РѕР±С…РѕРґР° РїРѕРґРґРµСЂРµРІСЊРµРІ
 	equ(Tree->right);
-	cout << Tree->key << " " << endl;
-	if (((Tree->left) == NullNode) && ((Tree->right) == NullNode)) // проверка на лист(задача)
+	if ((Node_Child(Tree->left)== Node_Child(Tree->right))&&(Node_Child(Tree->left)!=1)&&( Node_Child(Tree->left)!=1))	// РїСЂРѕРІРµСЂРєР° 
 	{
-		cout << Tree->key << " ";
+		if ((Tree->key != 0)) {
+			cout << Tree->key << " " << endl;
+			cout << "Left: " << Node_Child(Tree->left) << endl;
+			cout << "Right: " << Node_Child(Tree->right) << endl;
+		}
 	}
 
 }
 
-void show(rbtree *&Tree) //Функция вывода дерева на экран
+void show(rbtree *&Tree) //Р¤СѓРЅРєС†РёСЏ РІС‹РІРѕРґР° РґРµСЂРµРІР° РЅР° СЌРєСЂР°РЅ
 {
-	if (Tree != NULL) //Пока не встретится пустое звено 
+	if (Tree != NULL) //РџРѕРєР° РЅРµ РІСЃС‚СЂРµС‚РёС‚СЃСЏ РїСѓСЃС‚РѕРµ Р·РІРµРЅРѕ 
 	{
-		cout << " " << Tree->key << endl;
+		level++;
+		show(Tree->left); //Р РµРєСѓСЂСЃРёРІРЅР°СЏ С„СѓРЅРєС†РёСЏ РґР»СЏ РІС‹РІРѕРґР° Р»РµРІРѕРіРѕ РїРѕРґРґРµСЂРµРІР° 
+
+		for (int i = 0; i<level; i++)
+			cout << " ";
+		cout << " " << Tree->key << endl; //РћС‚РѕР±СЂР°Р¶Р°РµРј РєРѕСЂРµРЅСЊ РґРµСЂРµРІР° 
+
+		show(Tree->right); //Р РµРєСѓСЂСЃРёРІРЅР°СЏ С„СѓРЅРєС†Рё РґР»СЏ РІС‹РІРѕРґР° РїСЂР°РІРѕРіРѕ РїРѕРґРґРµСЂРµРІР° 
+		level--;
 	}
-	else cout << "Tree is NULL" << endl;
-	//if (Tree != NULL) //Пока не встретится пустое звено 
-	//{
-	//	level++;
-	//	show(Tree->left); //Рекурсивная функция для вывода левого поддерева 
-
-	//	for (int i = 0; i<level; i++)
-	//		cout << " ";
-	//	cout << " " << Tree->key << endl; //Отображаем корень дерева 
-
-	//	show(Tree->right); //Рекурсивная функци для вывода правого поддерева 
-	//	level--;
-	//}
 
 }
 
@@ -209,27 +216,16 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "Russian");
 	struct rbtree *tree = NULL;
 	int i;
-	/*cout << "Введите числа: (0 - для завершения )" << endl;
+	cout << "Р’РІРµРґРёС‚Рµ С‡РёСЃР»Р°: (0 - РґР»СЏ Р·Р°РІРµСЂС€РµРЅРёСЏ )" << endl;
 	do
 	{
 		scanf("%d", &i);
 		if (i != 0)
 			tree = rbtree_add(tree, i);
-	} while (i != 0);*/
+	} while (i != 0);
 
-	
-	
-	rbtree_add(tree, 10);
-	tree = rbtree_add(tree, 5);
-	tree = rbtree_add(tree, 3);
-	/*tree = rbtree_add(tree, 11);
-	tree = rbtree_add(tree, 12);
-	tree = rbtree_add(tree, 6);
-	tree = rbtree_add(tree, 8);
-	tree = rbtree_add(tree, 9);*/
 	show(tree);
-	//rbtree_print(tree);
-	//rbtree_free(tree);
+	equ(tree);
 
 	system("pause");
 	return 0;
